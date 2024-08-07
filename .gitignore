@@ -7,3 +7,5 @@ riderModule.iml
 Resources/
 Properties/Resources.resx
 Properties/Resources.Designer.cs
+.vs/
+/SummonerCreator.csproj.user
