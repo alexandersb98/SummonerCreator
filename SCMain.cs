@@ -234,19 +234,18 @@ namespace SummonerCreator
 
         private void AddNewVoiceBundlesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var voiceBundles = (Dictionary<DatabaseID, VoiceBundle>)typeof(LandfallContentDatabase)
-                .GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_voiceBundles");
+            var voiceBundles = (Dictionary<DatabaseID, VoiceBundle>) field.GetValue(db);
 
             foreach (var voiceBundle in newVoiceBundles)
             {
-                if (!voiceBundles.ContainsKey(voiceBundle.Entity.GUID))
-                {
-                    voiceBundles.Add(voiceBundle.Entity.GUID, voiceBundle);
-                    nonStreamableAssets.Add(voiceBundle.Entity.GUID, voiceBundle);
-                }
+                var guid = voiceBundle.Entity.GUID;
+                if (voiceBundles.ContainsKey(guid)) continue;
+                
+                voiceBundles.Add(guid, voiceBundle);
+                nonStreamableAssets.Add(guid, voiceBundle);
             }
-            typeof(LandfallContentDatabase).GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, voiceBundles);
+            field.SetValue(db, voiceBundles);
         }
 
         private void AddNewCampaignLevelsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
