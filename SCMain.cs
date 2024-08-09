@@ -282,25 +282,23 @@ namespace SummonerCreator
 
         private void AddNewFactionsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var factions = (Dictionary<DatabaseID, Faction>)typeof(LandfallContentDatabase)
-                .GetField("m_factions", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var factionsField = GetFieldInLandfallContentDb("m_factions");
+            var factions = (Dictionary<DatabaseID, Faction>) factionsField.GetValue(db);
 
-            var defaultHotbarFactions = (List<DatabaseID>)typeof(LandfallContentDatabase)
-                .GetField("m_defaultHotbarFactionIds", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var defaultHotbarFactionIdsField = GetFieldInLandfallContentDb("m_defaultHotbarFactionIds");
+            var defaultHotbarFactionIds = (List<DatabaseID>) defaultHotbarFactionIdsField.GetValue(db);
 
             foreach (var faction in newFactions)
             {
-                if (!factions.ContainsKey(faction.Entity.GUID))
-                {
-                    factions.Add(faction.Entity.GUID, faction);
-                    nonStreamableAssets.Add(faction.Entity.GUID, faction);
-                    defaultHotbarFactions.Add(faction.Entity.GUID);
-                }
+                var guid = faction.Entity.GUID;
+                if (factions.ContainsKey(guid)) continue;
+                
+                factions.Add(guid, faction);
+                nonStreamableAssets.Add(guid, faction);
+                defaultHotbarFactionIds.Add(guid);
             }
-            typeof(LandfallContentDatabase).GetField("m_factions", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, factions);
-            typeof(LandfallContentDatabase).GetField("m_defaultHotbarFactionIds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, defaultHotbarFactions.OrderBy(x => factions[x].index).ToList());
+            factionsField.SetValue(db, factions);
+            defaultHotbarFactionIdsField.SetValue(db, defaultHotbarFactionIds.OrderBy(x => factions[x].index).ToList());
         }
 
         private void AddNewUnitsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
