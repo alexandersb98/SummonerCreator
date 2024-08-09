@@ -202,19 +202,18 @@ namespace SummonerCreator
 
         private void AddNewUnitBasesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var unitBases = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
-                .GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_unitBases");
+            var unitBases = (Dictionary<DatabaseID, GameObject>) field.GetValue(db);
 
             foreach (var unitBase in newBases)
             {
-                if (!unitBases.ContainsKey(unitBase.GetComponent<Unit>().Entity.GUID))
-                {
-                    unitBases.Add(unitBase.GetComponent<Unit>().Entity.GUID, unitBase);
-                    nonStreamableAssets.Add(unitBase.GetComponent<Unit>().Entity.GUID, unitBase);
-                }
+                var guid = unitBase.GetComponent<Unit>().Entity.GUID;
+                if (unitBases.ContainsKey(guid)) continue;
+
+                unitBases.Add(guid, unitBase);
+                nonStreamableAssets.Add(guid, unitBase);
             }
-            typeof(LandfallContentDatabase).GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, unitBases);
+            field.SetValue(db, unitBases);
         }
 
         private void AddNewFactionIconsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
