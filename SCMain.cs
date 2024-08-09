@@ -186,19 +186,18 @@ namespace SummonerCreator
 
         private void AddNewPropsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var props = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
-                .GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_characterProps");
+            var props = (Dictionary<DatabaseID, GameObject>) field.GetValue(db);
 
             foreach (var prop in newProps)
             {
-                if (!props.ContainsKey(prop.GetComponent<PropItem>().Entity.GUID))
-                {
-                    props.Add(prop.GetComponent<PropItem>().Entity.GUID, prop);
-                    nonStreamableAssets.Add(prop.GetComponent<PropItem>().Entity.GUID, prop);
-                }
+                var guid = prop.GetComponent<PropItem>().Entity.GUID;
+                if (props.ContainsKey(guid)) continue;
+
+                props.Add(guid, prop);
+                nonStreamableAssets.Add(guid, prop);
             }
-            typeof(LandfallContentDatabase).GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, props);
+            field.SetValue(db, props);
         }
 
         private void AddNewUnitBasesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
