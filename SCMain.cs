@@ -218,19 +218,18 @@ namespace SummonerCreator
 
         private void AddNewFactionIconsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var factionIcons = (List<DatabaseID>)typeof(LandfallContentDatabase)
-                .GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_factionIconIds");
+            var factionIcons = (List<DatabaseID>) field.GetValue(db);
 
             foreach (var factionIcon in newFactionIcons)
             {
-                if (!factionIcons.Contains(factionIcon.Entity.GUID))
-                {
-                    factionIcons.Add(factionIcon.Entity.GUID);
-                    nonStreamableAssets.Add(factionIcon.Entity.GUID, factionIcon);
-                }
+                var guid = factionIcon.Entity.GUID;
+                if (factionIcons.Contains(guid)) continue;
+
+                factionIcons.Add(guid);
+                nonStreamableAssets.Add(guid, factionIcon);
             }
-            typeof(LandfallContentDatabase).GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, factionIcons);
+            field.SetValue(db, factionIcons);
         }
 
         private void AddNewVoiceBundlesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
