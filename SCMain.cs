@@ -141,7 +141,10 @@ namespace SummonerCreator
 
         private void AddNewWeaponsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, GameObject> weapons = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var weapons = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
+                .GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var weapon in newWeapons)
             {
                 if (!weapons.ContainsKey(weapon.GetComponent<WeaponItem>().Entity.GUID))
@@ -155,7 +158,10 @@ namespace SummonerCreator
 
         private void AddNewAbilitiesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, GameObject> abilities = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var abilities = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
+                .GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var ability in newAbilities)
             {
                 if (!abilities.ContainsKey(ability.GetComponent<SpecialAbility>().Entity.GUID))
@@ -169,7 +175,10 @@ namespace SummonerCreator
 
         private void AddNewPropsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, GameObject> props = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var props = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
+                .GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var prop in newProps)
             {
                 if (!props.ContainsKey(prop.GetComponent<PropItem>().Entity.GUID))
@@ -183,7 +192,10 @@ namespace SummonerCreator
 
         private void AddNewUnitBasesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, GameObject> unitBases = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var unitBases = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
+                .GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var unitBase in newBases)
             {
                 if (!unitBases.ContainsKey(unitBase.GetComponent<Unit>().Entity.GUID))
@@ -197,7 +209,10 @@ namespace SummonerCreator
 
         private void AddNewFactionIconsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            List<DatabaseID> factionIcons = (List<DatabaseID>)typeof(LandfallContentDatabase).GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var factionIcons = (List<DatabaseID>)typeof(LandfallContentDatabase)
+                .GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var factionIcon in newFactionIcons)
             {
                 if (!factionIcons.Contains(factionIcon.Entity.GUID))
@@ -211,7 +226,10 @@ namespace SummonerCreator
 
         private void AddNewVoiceBundlesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, VoiceBundle> voiceBundles = (Dictionary<DatabaseID, VoiceBundle>)typeof(LandfallContentDatabase).GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var voiceBundles = (Dictionary<DatabaseID, VoiceBundle>)typeof(LandfallContentDatabase)
+                .GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var voiceBundle in newVoiceBundles)
             {
                 if (!voiceBundles.ContainsKey(voiceBundle.Entity.GUID))
@@ -225,7 +243,10 @@ namespace SummonerCreator
 
         private void AddNewCampaignLevelsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, TABSCampaignLevelAsset> campaignLevels = (Dictionary<DatabaseID, TABSCampaignLevelAsset>)typeof(LandfallContentDatabase).GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var campaignLevels = (Dictionary<DatabaseID, TABSCampaignLevelAsset>)typeof(LandfallContentDatabase)
+                .GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var campaignLevel in newCampaignLevels)
             {
                 if (!campaignLevels.ContainsKey(campaignLevel.Entity.GUID))
@@ -239,7 +260,10 @@ namespace SummonerCreator
 
         private void AddNewCampaignsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, TABSCampaignAsset> campaigns = (Dictionary<DatabaseID, TABSCampaignAsset>)typeof(LandfallContentDatabase).GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var campaigns = (Dictionary<DatabaseID, TABSCampaignAsset>)typeof(LandfallContentDatabase)
+                .GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var campaign in newCampaigns)
             {
                 if (!campaigns.ContainsKey(campaign.Entity.GUID))
@@ -253,8 +277,14 @@ namespace SummonerCreator
 
         private void AddNewFactionsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, Faction> factions = (Dictionary<DatabaseID, Faction>)typeof(LandfallContentDatabase).GetField("m_factions", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            List<DatabaseID> defaultHotbarFactions = (List<DatabaseID>)typeof(LandfallContentDatabase).GetField("m_defaultHotbarFactionIds", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var factions = (Dictionary<DatabaseID, Faction>)typeof(LandfallContentDatabase)
+                .GetField("m_factions", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
+            var defaultHotbarFactions = (List<DatabaseID>)typeof(LandfallContentDatabase)
+                .GetField("m_defaultHotbarFactionIds", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var faction in newFactions)
             {
                 if (!factions.ContainsKey(faction.Entity.GUID))
@@ -270,7 +300,10 @@ namespace SummonerCreator
 
         private void AddNewUnitsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            Dictionary<DatabaseID, UnitBlueprint> units = (Dictionary<DatabaseID, UnitBlueprint>)typeof(LandfallContentDatabase).GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            var units = (Dictionary<DatabaseID, UnitBlueprint>)typeof(LandfallContentDatabase)
+                .GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
             foreach (var unit in newUnits)
             {
                 if (!units.ContainsKey(unit.Entity.GUID))
