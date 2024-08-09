@@ -266,19 +266,18 @@ namespace SummonerCreator
 
         private void AddNewCampaignsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var campaigns = (Dictionary<DatabaseID, TABSCampaignAsset>)typeof(LandfallContentDatabase)
-                .GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_campaigns");
+            var campaigns = (Dictionary<DatabaseID, TABSCampaignAsset>) field.GetValue(db);
 
             foreach (var campaign in newCampaigns)
             {
-                if (!campaigns.ContainsKey(campaign.Entity.GUID))
-                {
-                    campaigns.Add(campaign.Entity.GUID, campaign);
-                    nonStreamableAssets.Add(campaign.Entity.GUID, campaign);
-                }
+                var guid = campaign.Entity.GUID;
+                if (campaigns.ContainsKey(guid)) continue;
+                
+                campaigns.Add(guid, campaign);
+                nonStreamableAssets.Add(guid, campaign);
             }
-            typeof(LandfallContentDatabase).GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, campaigns);
+            field.SetValue(db, campaigns);
         }
 
         private void AddNewFactionsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
