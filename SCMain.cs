@@ -250,19 +250,18 @@ namespace SummonerCreator
 
         private void AddNewCampaignLevelsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var campaignLevels = (Dictionary<DatabaseID, TABSCampaignLevelAsset>)typeof(LandfallContentDatabase)
-                .GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_campaignLevels");
+            var campaignLevels = (Dictionary<DatabaseID, TABSCampaignLevelAsset>) field.GetValue(db);
 
             foreach (var campaignLevel in newCampaignLevels)
             {
-                if (!campaignLevels.ContainsKey(campaignLevel.Entity.GUID))
-                {
-                    campaignLevels.Add(campaignLevel.Entity.GUID, campaignLevel);
-                    nonStreamableAssets.Add(campaignLevel.Entity.GUID, campaignLevel);
-                }
+                var guid = campaignLevel.Entity.GUID;
+                if (campaignLevels.ContainsKey(guid)) continue;
+                
+                campaignLevels.Add(guid, campaignLevel);
+                nonStreamableAssets.Add(guid, campaignLevel);
             }
-            typeof(LandfallContentDatabase).GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, campaignLevels);
+            field.SetValue(db, campaignLevels);
         }
 
         private void AddNewCampaignsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
