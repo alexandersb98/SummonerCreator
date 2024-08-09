@@ -130,11 +130,11 @@ namespace SummonerCreator
 
             foreach (var proj in newProjectiles)
             {
-                var projectileGuid = proj.GetComponent<ProjectileEntity>().Entity.GUID;
-                if (projectiles.ContainsKey(projectileGuid)) continue;
+                var guid = proj.GetComponent<ProjectileEntity>().Entity.GUID;
+                if (projectiles.ContainsKey(guid)) continue;
 
-                projectiles.Add(projectileGuid, proj);
-                nonStreamableAssets.Add(projectileGuid, proj);
+                projectiles.Add(guid, proj);
+                nonStreamableAssets.Add(guid, proj);
             }
 
             field.SetValue(db, projectiles);
@@ -159,30 +159,29 @@ namespace SummonerCreator
 
             foreach (var weapon in newWeapons)
             {
-                var weaponGuid = weapon.GetComponent<WeaponItem>().Entity.GUID;
-                if (weapons.ContainsKey(weaponGuid)) continue;
+                var guid = weapon.GetComponent<WeaponItem>().Entity.GUID;
+                if (weapons.ContainsKey(guid)) continue;
 
-                weapons.Add(weaponGuid, weapon);
-                nonStreamableAssets.Add(weaponGuid, weapon);
+                weapons.Add(guid, weapon);
+                nonStreamableAssets.Add(guid, weapon);
             }
             field.SetValue(db, weapons);
         }
 
         private void AddNewAbilitiesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var abilities = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
-                .GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_combatMoves");
+            var abilities = (Dictionary<DatabaseID, GameObject>) field.GetValue(db);
 
             foreach (var ability in newAbilities)
             {
-                if (!abilities.ContainsKey(ability.GetComponent<SpecialAbility>().Entity.GUID))
-                {
-                    abilities.Add(ability.GetComponent<SpecialAbility>().Entity.GUID, ability);
-                    nonStreamableAssets.Add(ability.GetComponent<SpecialAbility>().Entity.GUID, ability);
-                }
+                var guid = ability.GetComponent<SpecialAbility>().Entity.GUID;
+                if (abilities.ContainsKey(guid)) continue;
+                
+                abilities.Add(guid, ability);
+                nonStreamableAssets.Add(guid, ability);
             }
-            typeof(LandfallContentDatabase).GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, abilities);
+            field.SetValue(db, abilities);
         }
 
         private void AddNewPropsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
