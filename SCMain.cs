@@ -13,6 +13,30 @@ namespace SummonerCreator
 {
     public class SCMain
     {
+        public List<UnitBlueprint> newUnits = new List<UnitBlueprint>();
+
+        public List<Faction> newFactions = new List<Faction>();
+        
+        public List<TABSCampaignAsset> newCampaigns = new List<TABSCampaignAsset>();
+        
+        public List<TABSCampaignLevelAsset> newCampaignLevels = new List<TABSCampaignLevelAsset>();
+        
+        public List<VoiceBundle> newVoiceBundles = new List<VoiceBundle>();
+        
+        public List<FactionIcon> newFactionIcons = new List<FactionIcon>();
+        
+        public List<GameObject> newBases = new List<GameObject>();
+
+        public List<GameObject> newProps = new List<GameObject>();
+        
+        public List<GameObject> newAbilities = new List<GameObject>();
+
+        public List<GameObject> newWeapons = new List<GameObject>();
+        
+        public List<GameObject> newProjectiles = new List<GameObject>();
+
+        public AssetBundle summon = AssetBundle.LoadFromMemory(Properties.Resources.summon);
+
         public SCMain()
         {
             var db = ContentDatabase.Instance().LandfallContentDatabase;
@@ -140,18 +164,6 @@ namespace SummonerCreator
             field.SetValue(db, projectiles);
         }
 
-        [NotNull]
-        private static FieldInfo GetFieldInLandfallContentDb([NotNull] string fieldName)
-        {
-            var result = typeof(LandfallContentDatabase).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-            if (result == null)
-            {
-                throw new System.Exception($"Field '{fieldName}' not found in ${nameof(LandfallContentDatabase)}");
-            }
-
-            return result;
-        }
-
         private void AddNewWeaponsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
             var field = GetFieldInLandfallContentDb("m_weapons");
@@ -165,6 +177,7 @@ namespace SummonerCreator
                 weapons.Add(guid, weapon);
                 nonStreamableAssets.Add(guid, weapon);
             }
+
             field.SetValue(db, weapons);
         }
 
@@ -181,6 +194,7 @@ namespace SummonerCreator
                 abilities.Add(guid, ability);
                 nonStreamableAssets.Add(guid, ability);
             }
+
             field.SetValue(db, abilities);
         }
 
@@ -197,6 +211,7 @@ namespace SummonerCreator
                 props.Add(guid, prop);
                 nonStreamableAssets.Add(guid, prop);
             }
+
             field.SetValue(db, props);
         }
 
@@ -213,6 +228,7 @@ namespace SummonerCreator
                 unitBases.Add(guid, unitBase);
                 nonStreamableAssets.Add(guid, unitBase);
             }
+
             field.SetValue(db, unitBases);
         }
 
@@ -229,6 +245,7 @@ namespace SummonerCreator
                 factionIcons.Add(guid);
                 nonStreamableAssets.Add(guid, factionIcon);
             }
+
             field.SetValue(db, factionIcons);
         }
 
@@ -245,6 +262,7 @@ namespace SummonerCreator
                 voiceBundles.Add(guid, voiceBundle);
                 nonStreamableAssets.Add(guid, voiceBundle);
             }
+
             field.SetValue(db, voiceBundles);
         }
 
@@ -261,6 +279,7 @@ namespace SummonerCreator
                 campaignLevels.Add(guid, campaignLevel);
                 nonStreamableAssets.Add(guid, campaignLevel);
             }
+
             field.SetValue(db, campaignLevels);
         }
 
@@ -277,6 +296,7 @@ namespace SummonerCreator
                 campaigns.Add(guid, campaign);
                 nonStreamableAssets.Add(guid, campaign);
             }
+
             field.SetValue(db, campaigns);
         }
 
@@ -297,6 +317,7 @@ namespace SummonerCreator
                 nonStreamableAssets.Add(guid, faction);
                 defaultHotbarFactionIds.Add(guid);
             }
+
             factionsField.SetValue(db, factions);
             defaultHotbarFactionIdsField.SetValue(db, defaultHotbarFactionIds.OrderBy(x => factions[x].index).ToList());
         }
@@ -314,31 +335,20 @@ namespace SummonerCreator
                 units.Add(guid, unit);
                 nonStreamableAssets.Add(guid, unit);
             }
+
             field.SetValue(db, units);
         }
 
-        public List<UnitBlueprint> newUnits = new List<UnitBlueprint>();
+        [NotNull]
+        private static FieldInfo GetFieldInLandfallContentDb([NotNull] string fieldName)
+        {
+            var result = typeof(LandfallContentDatabase).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            if (result == null)
+            {
+                throw new System.Exception($"Field '{fieldName}' not found in ${nameof(LandfallContentDatabase)}");
+            }
 
-        public List<Faction> newFactions = new List<Faction>();
-        
-        public List<TABSCampaignAsset> newCampaigns = new List<TABSCampaignAsset>();
-        
-        public List<TABSCampaignLevelAsset> newCampaignLevels = new List<TABSCampaignLevelAsset>();
-        
-        public List<VoiceBundle> newVoiceBundles = new List<VoiceBundle>();
-        
-        public List<FactionIcon> newFactionIcons = new List<FactionIcon>();
-        
-        public List<GameObject> newBases = new List<GameObject>();
-
-        public List<GameObject> newProps = new List<GameObject>();
-        
-        public List<GameObject> newAbilities = new List<GameObject>();
-
-        public List<GameObject> newWeapons = new List<GameObject>();
-        
-        public List<GameObject> newProjectiles = new List<GameObject>();
-
-        public AssetBundle summon = AssetBundle.LoadFromMemory(Properties.Resources.summon);
+            return result;
+        }
     }
 }
