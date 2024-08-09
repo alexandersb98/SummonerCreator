@@ -101,139 +101,187 @@ namespace SummonerCreator
         
         public void AddContentToDatabase()
         {
-	        Dictionary<DatabaseID, UnityEngine.Object> nonStreamableAssets = (Dictionary<DatabaseID, UnityEngine.Object>)typeof(AssetLoader).GetField("m_nonStreamableAssets", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ContentDatabase.Instance().AssetLoader);
+	        var nonStreamableAssets = (Dictionary<DatabaseID, UnityEngine.Object>)typeof(AssetLoader)
+                .GetField("m_nonStreamableAssets", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(ContentDatabase.Instance().AssetLoader);
 	        
             var db = ContentDatabase.Instance().LandfallContentDatabase;
             
-            Dictionary<DatabaseID, UnitBlueprint> units = (Dictionary<DatabaseID, UnitBlueprint>)typeof(LandfallContentDatabase).GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var unit in newUnits)
+            AddNewUnitsToDb(db, nonStreamableAssets);
+            AddNewFactionsToDb(db, nonStreamableAssets);
+            AddNewCampaignsToDb(db, nonStreamableAssets);
+            AddNewCampaignLevelsToDb(db, nonStreamableAssets);
+            AddNewVoiceBundlesToDb(db, nonStreamableAssets);
+            AddNewFactionIconsToDb(db, nonStreamableAssets);
+            AddNewUnitBasesToDb(db, nonStreamableAssets);
+            AddNewPropsToDb(db, nonStreamableAssets);
+            AddNewAbilitiesToDb(db, nonStreamableAssets);
+            AddNewWeaponsToDb(db, nonStreamableAssets);
+            AddNewProjectilesToDb(db, nonStreamableAssets);
+
+            ServiceLocator.GetService<CustomContentLoaderModIO>().QuickRefresh(WorkshopContentType.Unit, null);
+        }
+
+        private void AddNewProjectilesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            var projectiles = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
+                .GetField("m_projectiles", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(db);
+
+            foreach (var proj in newProjectiles)
             {
-	            if (!units.ContainsKey(unit.Entity.GUID))
-	            {
-		            units.Add(unit.Entity.GUID, unit);
-		            nonStreamableAssets.Add(unit.Entity.GUID, unit);
-	            }
+                if (!projectiles.ContainsKey(proj.GetComponent<ProjectileEntity>().Entity.GUID))
+                {
+                    projectiles.Add(proj.GetComponent<ProjectileEntity>().Entity.GUID, proj);
+                    nonStreamableAssets.Add(proj.GetComponent<ProjectileEntity>().Entity.GUID, proj);
+                }
             }
-            typeof(LandfallContentDatabase).GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, units);
-            
+            typeof(LandfallContentDatabase).GetField("m_projectiles", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, projectiles);
+        }
+
+        private void AddNewWeaponsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, GameObject> weapons = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var weapon in newWeapons)
+            {
+                if (!weapons.ContainsKey(weapon.GetComponent<WeaponItem>().Entity.GUID))
+                {
+                    weapons.Add(weapon.GetComponent<WeaponItem>().Entity.GUID, weapon);
+                    nonStreamableAssets.Add(weapon.GetComponent<WeaponItem>().Entity.GUID, weapon);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, weapons);
+        }
+
+        private void AddNewAbilitiesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, GameObject> abilities = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var ability in newAbilities)
+            {
+                if (!abilities.ContainsKey(ability.GetComponent<SpecialAbility>().Entity.GUID))
+                {
+                    abilities.Add(ability.GetComponent<SpecialAbility>().Entity.GUID, ability);
+                    nonStreamableAssets.Add(ability.GetComponent<SpecialAbility>().Entity.GUID, ability);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, abilities);
+        }
+
+        private void AddNewPropsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, GameObject> props = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var prop in newProps)
+            {
+                if (!props.ContainsKey(prop.GetComponent<PropItem>().Entity.GUID))
+                {
+                    props.Add(prop.GetComponent<PropItem>().Entity.GUID, prop);
+                    nonStreamableAssets.Add(prop.GetComponent<PropItem>().Entity.GUID, prop);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, props);
+        }
+
+        private void AddNewUnitBasesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, GameObject> unitBases = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var unitBase in newBases)
+            {
+                if (!unitBases.ContainsKey(unitBase.GetComponent<Unit>().Entity.GUID))
+                {
+                    unitBases.Add(unitBase.GetComponent<Unit>().Entity.GUID, unitBase);
+                    nonStreamableAssets.Add(unitBase.GetComponent<Unit>().Entity.GUID, unitBase);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, unitBases);
+        }
+
+        private void AddNewFactionIconsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            List<DatabaseID> factionIcons = (List<DatabaseID>)typeof(LandfallContentDatabase).GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var factionIcon in newFactionIcons)
+            {
+                if (!factionIcons.Contains(factionIcon.Entity.GUID))
+                {
+                    factionIcons.Add(factionIcon.Entity.GUID);
+                    nonStreamableAssets.Add(factionIcon.Entity.GUID, factionIcon);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, factionIcons);
+        }
+
+        private void AddNewVoiceBundlesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, VoiceBundle> voiceBundles = (Dictionary<DatabaseID, VoiceBundle>)typeof(LandfallContentDatabase).GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var voiceBundle in newVoiceBundles)
+            {
+                if (!voiceBundles.ContainsKey(voiceBundle.Entity.GUID))
+                {
+                    voiceBundles.Add(voiceBundle.Entity.GUID, voiceBundle);
+                    nonStreamableAssets.Add(voiceBundle.Entity.GUID, voiceBundle);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, voiceBundles);
+        }
+
+        private void AddNewCampaignLevelsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, TABSCampaignLevelAsset> campaignLevels = (Dictionary<DatabaseID, TABSCampaignLevelAsset>)typeof(LandfallContentDatabase).GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var campaignLevel in newCampaignLevels)
+            {
+                if (!campaignLevels.ContainsKey(campaignLevel.Entity.GUID))
+                {
+                    campaignLevels.Add(campaignLevel.Entity.GUID, campaignLevel);
+                    nonStreamableAssets.Add(campaignLevel.Entity.GUID, campaignLevel);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, campaignLevels);
+        }
+
+        private void AddNewCampaignsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, TABSCampaignAsset> campaigns = (Dictionary<DatabaseID, TABSCampaignAsset>)typeof(LandfallContentDatabase).GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var campaign in newCampaigns)
+            {
+                if (!campaigns.ContainsKey(campaign.Entity.GUID))
+                {
+                    campaigns.Add(campaign.Entity.GUID, campaign);
+                    nonStreamableAssets.Add(campaign.Entity.GUID, campaign);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, campaigns);
+        }
+
+        private void AddNewFactionsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
             Dictionary<DatabaseID, Faction> factions = (Dictionary<DatabaseID, Faction>)typeof(LandfallContentDatabase).GetField("m_factions", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
             List<DatabaseID> defaultHotbarFactions = (List<DatabaseID>)typeof(LandfallContentDatabase).GetField("m_defaultHotbarFactionIds", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
             foreach (var faction in newFactions)
             {
-	            if (!factions.ContainsKey(faction.Entity.GUID))
-	            {
-		            factions.Add(faction.Entity.GUID, faction);
-		            nonStreamableAssets.Add(faction.Entity.GUID, faction);
-		            defaultHotbarFactions.Add(faction.Entity.GUID);
-	            }
+                if (!factions.ContainsKey(faction.Entity.GUID))
+                {
+                    factions.Add(faction.Entity.GUID, faction);
+                    nonStreamableAssets.Add(faction.Entity.GUID, faction);
+                    defaultHotbarFactions.Add(faction.Entity.GUID);
+                }
             }
             typeof(LandfallContentDatabase).GetField("m_factions", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, factions);
             typeof(LandfallContentDatabase).GetField("m_defaultHotbarFactionIds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, defaultHotbarFactions.OrderBy(x => factions[x].index).ToList());
-
-            Dictionary<DatabaseID, TABSCampaignAsset> campaigns = (Dictionary<DatabaseID, TABSCampaignAsset>)typeof(LandfallContentDatabase).GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var campaign in newCampaigns)
-            {
-	            if (!campaigns.ContainsKey(campaign.Entity.GUID))
-	            {
-		            campaigns.Add(campaign.Entity.GUID, campaign);
-		            nonStreamableAssets.Add(campaign.Entity.GUID, campaign);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_campaigns", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, campaigns);
-            
-            Dictionary<DatabaseID, TABSCampaignLevelAsset> campaignLevels = (Dictionary<DatabaseID, TABSCampaignLevelAsset>)typeof(LandfallContentDatabase).GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var campaignLevel in newCampaignLevels)
-            {
-	            if (!campaignLevels.ContainsKey(campaignLevel.Entity.GUID))
-	            {
-		            campaignLevels.Add(campaignLevel.Entity.GUID, campaignLevel);
-		            nonStreamableAssets.Add(campaignLevel.Entity.GUID, campaignLevel);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_campaignLevels", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, campaignLevels);
-            
-            Dictionary<DatabaseID, VoiceBundle> voiceBundles = (Dictionary<DatabaseID, VoiceBundle>)typeof(LandfallContentDatabase).GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var voiceBundle in newVoiceBundles)
-            {
-	            if (!voiceBundles.ContainsKey(voiceBundle.Entity.GUID))
-	            {
-		            voiceBundles.Add(voiceBundle.Entity.GUID, voiceBundle);
-		            nonStreamableAssets.Add(voiceBundle.Entity.GUID, voiceBundle);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_voiceBundles", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, voiceBundles);
-            
-            List<DatabaseID> factionIcons = (List<DatabaseID>)typeof(LandfallContentDatabase).GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var factionIcon in newFactionIcons)
-            {
-	            if (!factionIcons.Contains(factionIcon.Entity.GUID))
-	            {
-		            factionIcons.Add(factionIcon.Entity.GUID);
-		            nonStreamableAssets.Add(factionIcon.Entity.GUID, factionIcon);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_factionIconIds", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, factionIcons);
-            
-            Dictionary<DatabaseID, GameObject> unitBases = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var unitBase in newBases)
-            {
-	            if (!unitBases.ContainsKey(unitBase.GetComponent<Unit>().Entity.GUID))
-	            {
-		            unitBases.Add(unitBase.GetComponent<Unit>().Entity.GUID, unitBase);
-		            nonStreamableAssets.Add(unitBase.GetComponent<Unit>().Entity.GUID, unitBase);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_unitBases", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, unitBases);
-            
-            Dictionary<DatabaseID, GameObject> props = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var prop in newProps)
-            {
-	            if (!props.ContainsKey(prop.GetComponent<PropItem>().Entity.GUID))
-	            {
-		            props.Add(prop.GetComponent<PropItem>().Entity.GUID, prop);
-		            nonStreamableAssets.Add(prop.GetComponent<PropItem>().Entity.GUID, prop);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_characterProps", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, props);
-            
-            Dictionary<DatabaseID, GameObject> abilities = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var ability in newAbilities)
-            {
-	            if (!abilities.ContainsKey(ability.GetComponent<SpecialAbility>().Entity.GUID))
-	            {
-		            abilities.Add(ability.GetComponent<SpecialAbility>().Entity.GUID, ability);
-		            nonStreamableAssets.Add(ability.GetComponent<SpecialAbility>().Entity.GUID, ability);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_combatMoves", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, abilities);
-            
-            Dictionary<DatabaseID, GameObject> weapons = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var weapon in newWeapons)
-            {
-	            if (!weapons.ContainsKey(weapon.GetComponent<WeaponItem>().Entity.GUID))
-	            {
-		            weapons.Add(weapon.GetComponent<WeaponItem>().Entity.GUID, weapon);
-		            nonStreamableAssets.Add(weapon.GetComponent<WeaponItem>().Entity.GUID, weapon);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, weapons);
-            
-            Dictionary<DatabaseID, GameObject> projectiles = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase).GetField("m_projectiles", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
-            foreach (var proj in newProjectiles)
-            {
-	            if (!projectiles.ContainsKey(proj.GetComponent<ProjectileEntity>().Entity.GUID))
-	            {
-		            projectiles.Add(proj.GetComponent<ProjectileEntity>().Entity.GUID, proj);
-		            nonStreamableAssets.Add(proj.GetComponent<ProjectileEntity>().Entity.GUID, proj);
-	            }
-            }
-            typeof(LandfallContentDatabase).GetField("m_projectiles", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, projectiles);
-
-
-            
-            ServiceLocator.GetService<CustomContentLoaderModIO>().QuickRefresh(WorkshopContentType.Unit, null);
         }
-        
+
+        private void AddNewUnitsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
+        {
+            Dictionary<DatabaseID, UnitBlueprint> units = (Dictionary<DatabaseID, UnitBlueprint>)typeof(LandfallContentDatabase).GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(db);
+            foreach (var unit in newUnits)
+            {
+                if (!units.ContainsKey(unit.Entity.GUID))
+                {
+                    units.Add(unit.Entity.GUID, unit);
+                    nonStreamableAssets.Add(unit.Entity.GUID, unit);
+                }
+            }
+            typeof(LandfallContentDatabase).GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, units);
+        }
+
         public List<UnitBlueprint> newUnits = new List<UnitBlueprint>();
 
         public List<Faction> newFactions = new List<Faction>();
