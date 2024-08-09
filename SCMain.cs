@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using DM;
+using JetBrains.Annotations;
 using Landfall.TABS.Workshop;
 using Landfall.TABS.UnitEditor;
 
@@ -124,19 +125,31 @@ namespace SummonerCreator
 
         private void AddNewProjectilesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var projectiles = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
-                .GetField("m_projectiles", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_projectiles");
+            var projectiles = (Dictionary<DatabaseID, GameObject>) field.GetValue(db);
 
             foreach (var proj in newProjectiles)
             {
-                if (!projectiles.ContainsKey(proj.GetComponent<ProjectileEntity>().Entity.GUID))
-                {
-                    projectiles.Add(proj.GetComponent<ProjectileEntity>().Entity.GUID, proj);
-                    nonStreamableAssets.Add(proj.GetComponent<ProjectileEntity>().Entity.GUID, proj);
-                }
+                var projectileGuid = proj.GetComponent<ProjectileEntity>().Entity.GUID;
+                if (projectiles.ContainsKey(projectileGuid)) continue;
+
+                projectiles.Add(projectileGuid, proj);
+                nonStreamableAssets.Add(projectileGuid, proj);
             }
-            typeof(LandfallContentDatabase).GetField("m_projectiles", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, projectiles);
+
+            field.SetValue(db, projectiles);
+        }
+
+        [NotNull]
+        private static FieldInfo GetFieldInLandfallContentDb([NotNull] string fieldName)
+        {
+            var result = typeof(LandfallContentDatabase).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            if (result == null)
+            {
+                throw new System.Exception($"Field '{fieldName}' not found in ${nameof(LandfallContentDatabase)}");
+            }
+
+            return result;
         }
 
         private void AddNewWeaponsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
