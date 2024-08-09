@@ -303,19 +303,18 @@ namespace SummonerCreator
 
         private void AddNewUnitsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var units = (Dictionary<DatabaseID, UnitBlueprint>)typeof(LandfallContentDatabase)
-                .GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_unitBlueprints");
+            var units = (Dictionary<DatabaseID, UnitBlueprint>) field.GetValue(db);
 
             foreach (var unit in newUnits)
             {
-                if (!units.ContainsKey(unit.Entity.GUID))
-                {
-                    units.Add(unit.Entity.GUID, unit);
-                    nonStreamableAssets.Add(unit.Entity.GUID, unit);
-                }
+                var guid = unit.Entity.GUID;
+                if (units.ContainsKey(guid)) continue;
+                
+                units.Add(guid, unit);
+                nonStreamableAssets.Add(guid, unit);
             }
-            typeof(LandfallContentDatabase).GetField("m_unitBlueprints", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, units);
+            field.SetValue(db, units);
         }
 
         public List<UnitBlueprint> newUnits = new List<UnitBlueprint>();
