@@ -154,19 +154,18 @@ namespace SummonerCreator
 
         private void AddNewWeaponsToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
         {
-            var weapons = (Dictionary<DatabaseID, GameObject>)typeof(LandfallContentDatabase)
-                .GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.GetValue(db);
+            var field = GetFieldInLandfallContentDb("m_weapons");
+            var weapons = (Dictionary<DatabaseID, GameObject>) field.GetValue(db);
 
             foreach (var weapon in newWeapons)
             {
-                if (!weapons.ContainsKey(weapon.GetComponent<WeaponItem>().Entity.GUID))
-                {
-                    weapons.Add(weapon.GetComponent<WeaponItem>().Entity.GUID, weapon);
-                    nonStreamableAssets.Add(weapon.GetComponent<WeaponItem>().Entity.GUID, weapon);
-                }
+                var weaponGuid = weapon.GetComponent<WeaponItem>().Entity.GUID;
+                if (weapons.ContainsKey(weaponGuid)) continue;
+
+                weapons.Add(weaponGuid, weapon);
+                nonStreamableAssets.Add(weaponGuid, weapon);
             }
-            typeof(LandfallContentDatabase).GetField("m_weapons", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(db, weapons);
+            field.SetValue(db, weapons);
         }
 
         private void AddNewAbilitiesToDb(LandfallContentDatabase db, Dictionary<DatabaseID, Object> nonStreamableAssets)
