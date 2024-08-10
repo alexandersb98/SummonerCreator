@@ -131,6 +131,15 @@ public class ModContentAdder
     }
 
     [NotNull]
+    public ModContentAdder AddUnitsToDb([NotNull, ItemNotNull] IList<UnitBlueprint> units)
+    {
+        return AddGameObjectsToDbDictionary(
+            landfallContentDatabaseFieldName: "m_unitBlueprints", 
+            gameObjects: units,
+            getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
+    }
+
+    [NotNull]
     private ModContentAdder AddGameObjectsToDbList<TGameObject>(
         [NotNull] string landfallContentDatabaseFieldName,
         [NotNull, ItemNotNull] IList<TGameObject> gameObjects,
@@ -185,15 +194,6 @@ public class ModContentAdder
         var defaultHotbarFactionIdsOrderedAscendingly = defaultHotbarFactionIds.OrderBy(x => currentFactions[x].index).ToList();
         defaultHotbarFactionIdsField.SetValue(landfallContentDatabase,
             value: defaultHotbarFactionIdsOrderedAscendingly);
-    }
-
-    [NotNull]
-    public ModContentAdder AddUnitsToDb([NotNull, ItemNotNull] IList<UnitBlueprint> units)
-    {
-        return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_unitBlueprints", 
-            gameObjects: units,
-            getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
     }
 
     [NotNull]
