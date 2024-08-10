@@ -26,12 +26,24 @@ public class ModContentAdder
         this.nonStreamableAssets = (Dictionary<DatabaseID, UnityEngine.Object>) nonStreamableAssetsField.GetValue(assetLoader);
     }
 
+    private const string ProjectilesFieldName = "m_projectiles";
+    private const string WeaponsFieldName = "m_weapons";
+    private const string AbilitiesFieldName = "m_combatMoves";
+    private const string PropsFieldName = "m_characterProps";
+    private const string UnitBasesFieldName = "m_unitBases";
+    private const string FactionIconsFieldName = "m_factionIconIds";
+    private const string VoiceBundlesFieldName = "m_voiceBundles";
+    private const string CampaignLevelsFieldName = "m_campaignLevels";
+    private const string CampaignsFieldName = "m_campaigns";
+    private const string UnitsFieldName = "m_unitBlueprints";
+    private const string FactionsFieldName = "m_factions";
+    private const string DefaultHotbarFactionsFieldName = "m_defaultHotbarFactionIds";
 
     [NotNull]
     public ModContentAdder AddProjectilesToDb([NotNull, ItemNotNull] IList<GameObject> projectiles)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_projectiles", 
+            landfallContentDatabaseFieldName: ProjectilesFieldName, 
             gameObjects: projectiles, 
             getDatabaseIdFromGameObjectFn: x => x.GetComponent<ProjectileEntity>().Entity.GUID);
     }
@@ -40,7 +52,7 @@ public class ModContentAdder
     public ModContentAdder AddWeaponsToDb([NotNull, ItemNotNull] IList<GameObject> weapons)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_weapons", 
+            landfallContentDatabaseFieldName: WeaponsFieldName, 
             gameObjects: weapons, 
             getDatabaseIdFromGameObjectFn: x => x.GetComponent<WeaponItem>().Entity.GUID);
     }
@@ -49,7 +61,7 @@ public class ModContentAdder
     public ModContentAdder AddAbilitiesToDb([NotNull, ItemNotNull] IList<GameObject> abilities)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_combatMoves", 
+            landfallContentDatabaseFieldName: AbilitiesFieldName, 
             gameObjects: abilities, 
             getDatabaseIdFromGameObjectFn: x => x.GetComponent<SpecialAbility>().Entity.GUID);
     }
@@ -58,7 +70,7 @@ public class ModContentAdder
     public ModContentAdder AddPropsToDb([NotNull, ItemNotNull] IList<GameObject> props)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_characterProps", 
+            landfallContentDatabaseFieldName: PropsFieldName, 
             gameObjects: props, 
             getDatabaseIdFromGameObjectFn: x => x.GetComponent<PropItem>().Entity.GUID);
     }
@@ -67,7 +79,7 @@ public class ModContentAdder
     public ModContentAdder AddUnitBasesToDb([NotNull, ItemNotNull] IList<GameObject> unitBases)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_unitBases", 
+            landfallContentDatabaseFieldName: UnitBasesFieldName, 
             gameObjects: unitBases, 
             getDatabaseIdFromGameObjectFn: (x) => x.GetComponent<Unit>().Entity.GUID);
     }
@@ -76,7 +88,7 @@ public class ModContentAdder
     public ModContentAdder AddFactionIconsToDb([NotNull, ItemNotNull] IList<FactionIcon> factionIcons)
     {
         return AddGameObjectsToDbList(
-            landfallContentDatabaseFieldName: "m_factionIconIds", 
+            landfallContentDatabaseFieldName: FactionIconsFieldName, 
             gameObjects: factionIcons,
             getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
     }
@@ -85,7 +97,7 @@ public class ModContentAdder
     public ModContentAdder AddVoiceBundlesToDb([NotNull, ItemNotNull] IList<VoiceBundle> voiceBundles)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_voiceBundles", 
+            landfallContentDatabaseFieldName: VoiceBundlesFieldName, 
             gameObjects: voiceBundles,
             getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
     }
@@ -94,7 +106,7 @@ public class ModContentAdder
     public ModContentAdder AddCampaignLevelsToDb([NotNull, ItemNotNull] IList<TABSCampaignLevelAsset> campaignLevels)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_campaignLevels", 
+            landfallContentDatabaseFieldName: CampaignLevelsFieldName, 
             gameObjects: campaignLevels,
             getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
     }
@@ -103,17 +115,16 @@ public class ModContentAdder
     public ModContentAdder AddCampaignsToDb([NotNull, ItemNotNull] IList<TABSCampaignAsset> campaigns)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_campaigns", 
+            landfallContentDatabaseFieldName: CampaignsFieldName, 
             gameObjects: campaigns, 
             getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
     }
 
-    
     [NotNull]
     public ModContentAdder AddUnitsToDb([NotNull, ItemNotNull] IList<UnitBlueprint> units)
     {
         return AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_unitBlueprints", 
+            landfallContentDatabaseFieldName: UnitsFieldName, 
             gameObjects: units,
             getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
     }
@@ -122,7 +133,7 @@ public class ModContentAdder
     public ModContentAdder AddFactionsToDb([NotNull, ItemNotNull] IList<Faction> factions)
     {
         AddGameObjectsToDbDictionary(
-            landfallContentDatabaseFieldName: "m_factions", 
+            landfallContentDatabaseFieldName: FactionsFieldName, 
             gameObjects: factions, 
             getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
 
@@ -133,10 +144,10 @@ public class ModContentAdder
 
     private void AddFactionsToDefaultHotbarFactions([NotNull, ItemNotNull] IList<Faction> factions)
     {
-        var factionsField = GetFieldFromLandfallContentDatabase("m_factions");
+        var factionsField = GetFieldFromLandfallContentDatabase(FactionsFieldName);
         var currentFactions = (Dictionary<DatabaseID, Faction>) factionsField.GetValue(landfallContentDatabase);
 
-        var defaultHotbarFactionIdsField = GetFieldFromLandfallContentDatabase("m_defaultHotbarFactionIds");
+        var defaultHotbarFactionIdsField = GetFieldFromLandfallContentDatabase(DefaultHotbarFactionsFieldName);
         var defaultHotbarFactionIds = (List<DatabaseID>) defaultHotbarFactionIdsField.GetValue(landfallContentDatabase);
 
         foreach (var faction in factions)
