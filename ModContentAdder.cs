@@ -108,28 +108,7 @@ public class ModContentAdder
             getDatabaseIdFromGameObjectFn: x => x.Entity.GUID);
     }
 
-    [NotNull]
-    private ModContentAdder AddGameObjectsToDbDictionary<TGameObject>(
-        [NotNull] string landfallContentDatabaseFieldName,
-        [NotNull, ItemNotNull] IList<TGameObject> gameObjects,
-        [NotNull] Func<TGameObject, DatabaseID> getDatabaseIdFromGameObjectFn) where TGameObject : UnityEngine.Object
-    {
-        var field = GetFieldFromLandfallContentDatabase(landfallContentDatabaseFieldName);
-        var currentGameObjects = (Dictionary<DatabaseID, TGameObject>) field.GetValue(landfallContentDatabase);
-
-        foreach (var gameObject in gameObjects)
-        {
-            var guid = getDatabaseIdFromGameObjectFn(gameObject);
-            if (currentGameObjects.ContainsKey(guid)) continue;
-
-            currentGameObjects.Add(guid, gameObject);
-            nonStreamableAssets.Add(guid, gameObject);
-        }
-
-        field.SetValue(landfallContentDatabase, currentGameObjects);
-        return this;
-    }
-
+    
     [NotNull]
     public ModContentAdder AddUnitsToDb([NotNull, ItemNotNull] IList<UnitBlueprint> units)
     {
@@ -195,6 +174,29 @@ public class ModContentAdder
         defaultHotbarFactionIdsField.SetValue(landfallContentDatabase,
             value: defaultHotbarFactionIdsOrderedAscendingly);
     }
+
+    [NotNull]
+    private ModContentAdder AddGameObjectsToDbDictionary<TGameObject>(
+        [NotNull] string landfallContentDatabaseFieldName,
+        [NotNull, ItemNotNull] IList<TGameObject> gameObjects,
+        [NotNull] Func<TGameObject, DatabaseID> getDatabaseIdFromGameObjectFn) where TGameObject : UnityEngine.Object
+    {
+        var field = GetFieldFromLandfallContentDatabase(landfallContentDatabaseFieldName);
+        var currentGameObjects = (Dictionary<DatabaseID, TGameObject>) field.GetValue(landfallContentDatabase);
+
+        foreach (var gameObject in gameObjects)
+        {
+            var guid = getDatabaseIdFromGameObjectFn(gameObject);
+            if (currentGameObjects.ContainsKey(guid)) continue;
+
+            currentGameObjects.Add(guid, gameObject);
+            nonStreamableAssets.Add(guid, gameObject);
+        }
+
+        field.SetValue(landfallContentDatabase, currentGameObjects);
+        return this;
+    }
+
 
     [NotNull]
     private static FieldInfo GetFieldFromLandfallContentDatabase([NotNull] string fieldName)
