@@ -119,28 +119,6 @@ public class ModContentAdder
     }
 
     [NotNull]
-    private ModContentAdder AddGameObjectsToDbList<TGameObject>(
-        [NotNull] string landfallContentDatabaseFieldName,
-        [NotNull, ItemNotNull] IList<TGameObject> gameObjects,
-        [NotNull] Func<TGameObject, DatabaseID> getDatabaseIdFromGameObjectFn) where TGameObject : UnityEngine.Object
-    {
-        var field = GetFieldFromLandfallContentDatabase(landfallContentDatabaseFieldName);
-        var currentGameObjects = (List<DatabaseID>) field.GetValue(landfallContentDatabase);
-
-        foreach (var gameObject in gameObjects)
-        {
-            var guid = getDatabaseIdFromGameObjectFn(gameObject);
-            if (currentGameObjects.Contains(guid)) continue;
-
-            currentGameObjects.Add(guid);
-            nonStreamableAssets.Add(guid, gameObject);
-        }
-
-        field.SetValue(landfallContentDatabase, currentGameObjects);
-        return this;
-    }
-
-    [NotNull]
     public ModContentAdder AddFactionsToDb([NotNull, ItemNotNull] IList<Faction> factions)
     {
         AddGameObjectsToDbDictionary(
@@ -197,6 +175,27 @@ public class ModContentAdder
         return this;
     }
 
+    [NotNull]
+    private ModContentAdder AddGameObjectsToDbList<TGameObject>(
+        [NotNull] string landfallContentDatabaseFieldName,
+        [NotNull, ItemNotNull] IList<TGameObject> gameObjects,
+        [NotNull] Func<TGameObject, DatabaseID> getDatabaseIdFromGameObjectFn) where TGameObject : UnityEngine.Object
+    {
+        var field = GetFieldFromLandfallContentDatabase(landfallContentDatabaseFieldName);
+        var currentGameObjects = (List<DatabaseID>) field.GetValue(landfallContentDatabase);
+
+        foreach (var gameObject in gameObjects)
+        {
+            var guid = getDatabaseIdFromGameObjectFn(gameObject);
+            if (currentGameObjects.Contains(guid)) continue;
+
+            currentGameObjects.Add(guid);
+            nonStreamableAssets.Add(guid, gameObject);
+        }
+
+        field.SetValue(landfallContentDatabase, currentGameObjects);
+        return this;
+    }
 
     [NotNull]
     private static FieldInfo GetFieldFromLandfallContentDatabase([NotNull] string fieldName)
