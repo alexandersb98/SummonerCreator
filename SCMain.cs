@@ -130,17 +130,17 @@ namespace SummonerCreator
                 landfallContentDatabase: ContentDatabase.Instance().LandfallContentDatabase, 
                 assetLoader: ContentDatabase.Instance().AssetLoader);
 
-            contentAdder.AddNewUnitsToDb(newUnits)
-                .AddNewFactionsToDb(newFactions)
-                .AddNewCampaignsToDb(newCampaigns)
-                .AddNewCampaignLevelsToDb(newCampaignLevels)
-                .AddNewVoiceBundlesToDb(newVoiceBundles)
-                .AddNewFactionIconsToDb(newFactionIcons)
-                .AddNewUnitBasesToDb(newBases)
-                .AddNewPropsToDb(newProps)
-                .AddNewAbilitiesToDb(newAbilities)
-                .AddNewWeaponsToDb(newWeapons)
-                .AddNewProjectilesToDb(newProjectiles);
+            contentAdder.AddUnitsToDb(newUnits)
+                .AddFactionsToDb(newFactions)
+                .AddCampaignsToDb(newCampaigns)
+                .AddCampaignLevelsToDb(newCampaignLevels)
+                .AddVoiceBundlesToDb(newVoiceBundles)
+                .AddFactionIconsToDb(newFactionIcons)
+                .AddUnitBasesToDb(newBases)
+                .AddPropsToDb(newProps)
+                .AddAbilitiesToDb(newAbilities)
+                .AddWeaponsToDb(newWeapons)
+                .AddProjectilesToDb(newProjectiles);
 
             ServiceLocator.GetService<CustomContentLoaderModIO>().QuickRefresh(WorkshopContentType.Unit, null);
         }
