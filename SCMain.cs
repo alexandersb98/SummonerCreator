@@ -14,25 +14,15 @@ namespace SummonerCreator
     public class SCMain
     {
         public List<UnitBlueprint> newUnits = new List<UnitBlueprint>();
-
         public List<Faction> newFactions = new List<Faction>();
-        
         public List<TABSCampaignAsset> newCampaigns = new List<TABSCampaignAsset>();
-        
         public List<TABSCampaignLevelAsset> newCampaignLevels = new List<TABSCampaignLevelAsset>();
-        
         public List<VoiceBundle> newVoiceBundles = new List<VoiceBundle>();
-        
         public List<FactionIcon> newFactionIcons = new List<FactionIcon>();
-        
         public List<GameObject> newBases = new List<GameObject>();
-
         public List<GameObject> newProps = new List<GameObject>();
-        
         public List<GameObject> newAbilities = new List<GameObject>();
-
         public List<GameObject> newWeapons = new List<GameObject>();
-        
         public List<GameObject> newProjectiles = new List<GameObject>();
 
         public AssetBundle summon = AssetBundle.LoadFromMemory(Properties.Resources.summon);
