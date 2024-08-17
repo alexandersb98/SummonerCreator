@@ -8,6 +8,17 @@ namespace SummonerCreator
 {
 	public class SummonerCast : MonoBehaviour
 	{
+        public int minions;
+        public UnitBlueprint[] spawnableUnits;
+        public int cooldown;
+        
+        private DataHandler data;
+        private Weapon weapon;
+
+        private SummonerStats stats;
+        private float maxRange = 15f;
+        private float minRange = 3f;
+
 		private void Start()
 		{
 			data = transform.root.GetComponentInChildren<DataHandler>();
@@ -112,20 +123,6 @@ namespace SummonerCreator
 			boolean = false;
 		}
 
-		private DataHandler data;
-
-		private Weapon weapon;
-
-		public int minions;
-
-		public UnitBlueprint[] spawnableUnits;
-
-		public int cooldown;
-
-		private SummonerStats stats;
-
-		private float maxRange = 15f;
-
-		private float minRange = 3f;
+		
 	}
 }

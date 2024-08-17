@@ -15,6 +15,24 @@ namespace SummonerCreator
 {
 	public class SummonerSingleton : GameStateListener
 	{
+        public Faction summonerFaction;
+        public UnitBlueprint summonerOriginal;
+        public SummonerStats summonerStats;
+        public Dictionary<string, Tuple<UnitBlueprint, SummonerStats>> summonerDic = new Dictionary<string, Tuple<UnitBlueprint, SummonerStats>>();
+        
+        private Dictionary<string, GUIStyle> styles;
+        private Vector2 unitListScroll;
+        private List<UnitBlueprint> selUnits = new List<UnitBlueprint>();
+        private int unitsPerSpawn = 5;
+        private int cooldown = 15;
+        private string summonerName = "";
+        private string logText;
+        private Color logColor;
+        private Dictionary<DatabaseID, UnitBlueprint> unitDictionary;
+
+        private static GameObject canvasChild;
+        private static SummonerSingleton instance;
+
 		private static int h
 		{
 			get
@@ -299,35 +317,5 @@ namespace SummonerCreator
 				canvasChild.SetActive(false);
 			}
 		}
-
-		public Faction summonerFaction;
-
-		public UnitBlueprint summonerOriginal;
-
-		public SummonerStats summonerStats;
-
-		public Dictionary<string, Tuple<UnitBlueprint, SummonerStats>> summonerDic = new Dictionary<string, Tuple<UnitBlueprint, SummonerStats>>();
-
-		private Dictionary<string, GUIStyle> styles;
-
-		private static GameObject canvasChild;
-
-		private Vector2 unitListScroll;
-
-		private List<UnitBlueprint> selUnits = new List<UnitBlueprint>();
-
-		private int unitsPerSpawn = 5;
-
-		private int cooldown = 15;
-
-		private string summonerName = "";
-
-		private string logText;
-
-		private Color logColor;
-
-		private static SummonerSingleton instance;
-
-		private Dictionary<DatabaseID, UnitBlueprint> unitDictionary;
 	}
 }
