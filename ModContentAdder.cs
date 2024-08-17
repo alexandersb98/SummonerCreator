@@ -22,7 +22,7 @@ public class ModContentAdder
     {
         this.landfallContentDatabase = landfallContentDatabase;
 
-        var nonStreamableAssetsField = GetFieldFromAssetLoader("m_nonStreamableAssets");
+        var nonStreamableAssetsField = GetFieldFromClass<AssetLoader>(fieldName: "m_nonStreamableAssets");
         this.nonStreamableAssets = (Dictionary<DatabaseID, UnityEngine.Object>) nonStreamableAssetsField.GetValue(assetLoader);
     }
 
@@ -215,12 +215,6 @@ public class ModContentAdder
     private static FieldInfo GetFieldFromLandfallContentDatabase([NotNull] string fieldName)
     {
         return GetFieldFromClass<LandfallContentDatabase>(fieldName);
-    }
-
-    [NotNull]
-    private static FieldInfo GetFieldFromAssetLoader([NotNull] string fieldName)
-    {
-        return GetFieldFromClass<AssetLoader>(fieldName);
     }
 
     [NotNull]
